@@ -49,9 +49,17 @@ cd app
 python3 app.py
 ```
 
+or
+
+```
+docker-compose build && docker-compose up
+```
+
 ## Deployment
 
-Run `docker-compose up` to run in a deployment environment
+```
+docker-compose build && docker-compose up
+```
 
 ## How to deploy to EC2
 
