@@ -79,7 +79,7 @@ def main():
 
 @app.route("/", methods=["POST"])
 def handler():
-    body = request.json
+    body = request.form.to_dict()
 
     if not os.getenv("CLIENT_PHONE") in body["From"]:  # Check if phone is known
         return send_xml("Not a known phone")
@@ -97,6 +97,9 @@ def handler():
             f.write(body["Body"])
         return "Done"
 
+    return "Done"
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
+    # app.run(port=9000)  # Debug
