@@ -58,7 +58,7 @@ docker-compose build && docker-compose up
 ## Deployment
 
 ```
-docker-compose build && docker-compose up
+docker-compose build && docker-compose up -d
 ```
 
 ## How to deploy to EC2
