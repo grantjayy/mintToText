@@ -46,7 +46,6 @@ def main():
         os.getenv("MINT_USER"),
         os.getenv("MINT_PASS"),
         headless=True,
-        mfa_input_callback=input_callback,
         mfa_method="sms",
     )
 
@@ -79,23 +78,27 @@ def main():
 
 @app.route("/", methods=["POST"])
 def handler():
-    body = request.form.to_dict()
+    try:
+        body = request.form.to_dict()
 
-    if not os.getenv("CLIENT_PHONE") in body["From"]:  # Check if phone is known
-        return send_xml("Not a known phone")
+        if not os.getenv("CLIENT_PHONE") in body["From"]:  # Check if phone is known
+            return send_xml("Not a known phone")
 
-    if "Start" in body["Body"]:  # Start Main sequence
-        send_msg("Starting... You should receive a MFA Code from Mint shortly.")
-        try:
-            main()
-        except Exception as e:
-            send_msg(f"Failed. Error was -->\n\n{e}")
-        return "Done"
+        if "Start" in body["Body"]:  # Start Main sequence
+            send_msg("Starting... You should receive a MFA Code from Mint shortly.")
+            try:
+                main()
+            except Exception as e:
+                send_msg(f"Failed. Error was -->\n\n{e}")
+            return "Done"
 
-    if body["Body"].isnumeric():  # Check for the MFA Code
-        with open("/tmp/mfa.txt", "w") as f:  # Write to file for use soon
-            f.write(body["Body"])
-        return "Done"
+        if body["Body"].isnumeric():  # Check for the MFA Code
+            with open("/tmp/mfa.txt", "w") as f:  # Write to file for use soon
+                f.write(body["Body"])
+            return "Done"
+    except Exception as e:
+        send_msg(f"Failed. Error was -->\n\n{e}")
+
 
     return "Done"
 
