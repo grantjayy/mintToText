@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
 
-sudo apt update && sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io
+sudo apt update -y && sudo apt-get update -y
+sudo apt-get install docker-ce docker-ce-cli containerd.io -y
+sudo chmod 666 /var/run/docker.sock
+
+# sudo ufw allow 'OpenSSH'
+# sudo ufw allow 'Nginx HTTP'
+# sudo ufw enable
+
+chmod +x ./deployment.sh

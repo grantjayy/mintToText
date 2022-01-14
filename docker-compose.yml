@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+  application:
+    build:
+      context: ./app
+    env_file:
+      - ./app/.env
+
+  proxy:
+    build: ./nginx
+    links:
+      - application:app # "app" is the hostname used in proxy_pass directive
+    ports:
+      - 8080:80
