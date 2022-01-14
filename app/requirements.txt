@@ -16,6 +16,7 @@ keyring==23.5.0
 lazy-object-proxy==1.7.1
 MarkupSafe==2.0.1
 mccabe==0.6.1
+mintapi==1.61
 mypy-extensions==0.4.3
 numpy==1.22.0
 oathtool==2.3.1

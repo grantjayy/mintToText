@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 app = Flask(__name__)
 
-logging.basicConfig(level=logging.INFO, format="%(name)s - %(levelname)s - %(message)s")
+logging.basicConfig(level=logging.DEBUG, format="%(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger()
 
 load_dotenv()
@@ -45,7 +45,8 @@ def main():
     mint = mintapi.Mint(  # Initialize Mint API For scraping
         os.getenv("MINT_USER"),
         os.getenv("MINT_PASS"),
-        # headless=True,
+        headless=True,
+        mfa_input_callback=input_callback,
         use_chromedriver_on_path=True,
         mfa_method="sms",
     )
@@ -99,7 +100,6 @@ def handler():
             return "Done"
     except Exception as e:
         send_msg(f"Failed. Error was -->\n\n{e}")
-
 
     return "Done"
 

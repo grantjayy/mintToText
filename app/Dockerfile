@@ -20,7 +20,7 @@ RUN pip install -r requirements.txt
 RUN pip install -U Flask
 
 COPY .env ./
-COPY mintapi ./mintapi
+# COPY mintapi ./mintapi
 COPY app.py ./
 
 CMD ["flask", "run", "-p", "8080", "-h", "0.0.0.0"]
