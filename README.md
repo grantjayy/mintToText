@@ -16,8 +16,10 @@ You can spend $8.02 each day, or $76.15 each week to stay on budget.
 ```
 
 The process flow looks like this:
+
 1) Send "Start" to the number you have registered with Twilio
 2) Mint will send you a MFA Code, copy and send this code to the number you have registered with Twilio
+
 3) The app will send you a text with the details of your spending for that month
 
 ## Requirements
@@ -37,9 +39,11 @@ The app needs to be hosted on a server. It cannot be hosted on AWS Lambda. I hav
 You will need to update the `.env.example` file. Remove the "example" from the end of the file name and add your Mint username and password, Twilio Application token and secret, and your personal phone number that you want to use with the app, and the application phone number that you use in Twilio.
 
 You will also need to send a webhook to your server from within the Twilio console.
+
 ## Local Development
 
 Run the app locally for development with the python command
+
 ```
 cd app
 python3 app.py
@@ -48,8 +52,8 @@ python3 app.py
 ## Deployment
 
 Run `docker-compose up` to run in a deployment environment
-## How to deploy to EC2
 
+## How to deploy to EC2
 
 1) Create a new .env based on your credentials
 2) Scp the .env to client
@@ -64,3 +68,9 @@ cd mintToText
 chmod +x ./newInstance.sh
 ./newInstance
 ```
+
+## Known Errors
+
+There are situations where during the MFA callback time period, there might not be an element on the mint page that is required by the API. If this is the case, you will get a "Max Retries" error from selenium.
+
+If this happens, just wait sometime before re-running the code.
