@@ -30,7 +30,7 @@ def input_callback(arg):
     logger.debug("callback")
 
     # sleeps for 25 seconds
-    sleep(20)
+    sleep(30)
 
     # Get code from txt file
     with open("/tmp/mfa.txt", "r") as f:
@@ -45,7 +45,8 @@ def main():
     mint = mintapi.Mint(  # Initialize Mint API For scraping
         os.getenv("MINT_USER"),
         os.getenv("MINT_PASS"),
-        headless=True,
+        # headless=True,
+        use_chromedriver_on_path=True,
         mfa_method="sms",
     )
 

@@ -245,9 +245,9 @@ def _create_web_driver_at_mint_com(
         chrome_options.add_argument("user-data-dir=%s" % session_path)
 
     if use_chromedriver_on_path:
-        chrome_path = "/opt/chromedriver"
-        chrome_options.binary_location = "/opt/chrome/chrome"
-        driver = Chrome(chrome_path, options=chrome_options)
+        # chrome_path = "/opt/chromedriver"
+        # chrome_options.binary_location = "/opt/chrome/chrome"
+        driver = Chrome(options=chrome_options)
     else:
         driver = Chrome(
             options=chrome_options,
