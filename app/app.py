@@ -30,7 +30,7 @@ def input_callback(arg):
     logger.debug("callback")
 
     # sleeps for 25 seconds
-    sleep(25)
+    sleep(20)
 
     # Get code from txt file
     with open("/tmp/mfa.txt", "r") as f:
@@ -47,7 +47,6 @@ def main():
         os.getenv("MINT_PASS"),
         headless=True,
         mfa_input_callback=input_callback,
-        use_chromedriver_on_path=True,
         mfa_method="sms",
     )
 
@@ -87,7 +86,10 @@ def handler():
 
     if "Start" in body["Body"]:  # Start Main sequence
         send_msg("Starting... You should receive a MFA Code from Mint shortly.")
-        main()
+        try:
+            main()
+        except Exception as e:
+            send_msg(f"Failed. Error was -->\n\n{e}")
         return "Done"
 
     if body["Body"].isnumeric():  # Check for the MFA Code
