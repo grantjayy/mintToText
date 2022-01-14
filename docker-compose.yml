@@ -12,4 +12,4 @@ services:
     links:
       - application:app # "app" is the hostname used in proxy_pass directive
     ports:
-      - 8080:80
+      - 80:80
