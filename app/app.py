@@ -101,5 +101,5 @@ def handler():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+    app.run(host="0.0.0.0", port=8080)  # Production
     # app.run(port=9000)  # Debug
