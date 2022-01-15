@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 app = Flask(__name__)
 
-logging.basicConfig(level=logging.INFO, format="%(name)s - %(levelname)s - %(message)s")
+logging.basicConfig(level=logging.DEBUG, format="%(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger()
 
 load_dotenv()
@@ -27,7 +27,7 @@ def send_xml(text):
 
 
 def input_callback(arg):
-    logger.debug("MFA Callback")
+    logger.info("MFA Callback")
 
     # sleeps for 30 seconds
     sleep(30)
@@ -78,7 +78,7 @@ def main():
 
     # Values for return Message
     output["month"] = now.format("MMMM")
-    output["remainder"] = BUDGET_AMOUNT - output["spent"]
+    output["remainder"] = BUDGET_AMOUNT - float(output["spent"])
     output["daily"] = output["remainder"] / period.days
     output["weekly"] = output["remainder"] / period.weeks
     output["budget"] = BUDGET_AMOUNT
