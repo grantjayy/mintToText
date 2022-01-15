@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 app = Flask(__name__)
 
-logging.basicConfig(level=logging.DEBUG, format="%(name)s - %(levelname)s - %(message)s")
+logging.basicConfig(level=logging.INFO, format="%(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger()
 
 load_dotenv()
@@ -101,8 +101,11 @@ def handler():
     try:
         body = request.form.to_dict()
 
-        if not os.getenv("CLIENT_PHONE") in body["From"]:  # Check if phone is known
-            return send_xml("Not a known phone")
+        try:
+            if not os.getenv("CLIENT_PHONE") in body["From"]:  # Check if phone is known
+                return send_xml("Not a known phone")
+        except KeyError:
+            return "done"
 
         if "Start" in body["Body"]:  # Start Main sequence
             send_msg("Starting... You should receive a MFA Code from Mint shortly.")
