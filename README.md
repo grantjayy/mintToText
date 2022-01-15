@@ -4,15 +4,21 @@ Do you use Mint.com primarily for tracking your expenses? Do you want to have an
 
 Look no further. This app does all of this.
 
+I like to use Mint to categorize my transactions, but setting individual budgets for things doesn't work for me. I give myself a monthly budget amount and stay within those guidelines.
+
 Each morning, send a text message to a application number that you have with Twilio, Mint will send you an MFA code, then you send that number back to the application number. You will then recieve a message with your spending limits for the rest of the month.
 
-Here is an example of the message you will recieve:
+Here is an example of the message you will receive:
 
 ```
-Left to spend for January: $152.31
-Total spent for January: $2047.69
+Left to spend for January: $337.48
+Total spent for January: $2,262.52
 
-You can spend $8.02 each day, or $76.15 each week to stay on budget.
+You can spend $19.85 each day, or $168.74 each week to stay on budget.
+
+Debit Account Balance: $388.67
+Credit Card Balance: $-91.99
+Monthly Budget: $2,600.00
 ```
 
 The process flow looks like this:
@@ -45,15 +51,10 @@ You will also need to send a webhook to your server from within the Twilio conso
 Run the app locally for development with the python command
 
 ```
-cd app
-python3 app.py
-```
-
-or
-
-```
 docker-compose build && docker-compose up
 ```
+
+Use Postman to send url encoded form data the localhost port
 
 ## Deployment
 

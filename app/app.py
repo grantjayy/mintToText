@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 app = Flask(__name__)
 
-logging.basicConfig(level=logging.DEBUG, format="%(name)s - %(levelname)s - %(message)s")
+logging.basicConfig(level=logging.INFO, format="%(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger()
 
 load_dotenv()
@@ -27,9 +27,9 @@ def send_xml(text):
 
 
 def input_callback(arg):
-    logger.debug("callback")
+    logger.debug("MFA Callback")
 
-    # sleeps for 25 seconds
+    # sleeps for 30 seconds
     sleep(30)
 
     # Get code from txt file
@@ -40,8 +40,9 @@ def input_callback(arg):
 
 
 def main():
-    logger.debug("Logging into Mint...")
+    output = {}
 
+    logger.debug("Logging into Mint...")
     mint = mintapi.Mint(  # Initialize Mint API For scraping
         os.getenv("MINT_USER"),
         os.getenv("MINT_PASS"),
@@ -54,6 +55,13 @@ def main():
     logger.debug("Initiating Account Refresh")
     mint.initiate_account_refresh()
 
+    for acc in mint.get_accounts():
+        if os.getenv("DEBIT_ACC") in acc["accountName"]:
+            output["debit"] = acc["currentBalance"]
+
+        if os.getenv("CREDIT_CARD") in acc["accountName"]:
+            output["credit"] = acc["value"]
+
     # Get Transactions and close Mint API
     now = pendulum.now(tz="America/Los_Angeles")
     df = mint.get_transactions(
@@ -62,19 +70,29 @@ def main():
     mint.close()
 
     ignore = ["income", "transfer", "credit card payment"]  # Categories of mint to ignore
-    spent = df[(~df["category"].isin(ignore)) & (df.transaction_type != "credit")].sum()[
+    output["spent"] = df[(~df["category"].isin(ignore)) & (df.transaction_type != "credit")].sum()[
         "amount"
     ]  # Sum dataframe of all debit transactions without unwanted categories
 
-    # Values for return Message
-    month = now.format("MMMM")
     period = now.end_of("month") - now
-    days_left = period.days
-    weeks_left = period.weeks
-    remainder = BUDGET_AMOUNT - spent
+
+    # Values for return Message
+    output["month"] = now.format("MMMM")
+    output["remainder"] = BUDGET_AMOUNT - output["spent"]
+    output["daily"] = output["remainder"] / period.days
+    output["weekly"] = output["remainder"] / period.weeks
+    output["budget"] = BUDGET_AMOUNT
 
     # Send Message with Twilio
-    message = f"Left to spend for {month}: ${round(remainder,2)}\nTotal spent for {month}: ${round(spent,2)}\n\nYou can spend ${round((remainder/days_left), 2)} each day, or ${round((remainder/weeks_left),2)} each week to stay on budget."
+    message = (
+        "Left to spend for {month}: ${remainder:,.2f}\n"
+        "Total spent for {month}: ${spent:,.2f}\n\n"
+        "You can spend ${daily:,.2f} each day, or ${weekly:,.2f} each week to stay on budget.\n\n"
+        "Debit Account Balance: ${debit:,.2f}\n"
+        "Credit Card Balance: ${credit:,.2f}\n"
+        "Monthly Budget: ${budget:,.2f}"
+    ).format(**output)
+
     send_msg(message)
 
 
@@ -97,6 +115,7 @@ def handler():
         if body["Body"].isnumeric():  # Check for the MFA Code
             with open("/tmp/mfa.txt", "w") as f:  # Write to file for use soon
                 f.write(body["Body"])
+            logger.debug(f"Saved MFA Code as {body['Body']}")
             return "Done"
     except Exception as e:
         send_msg(f"Failed. Error was -->\n\n{e}")
